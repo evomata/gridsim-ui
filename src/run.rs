@@ -2,6 +2,19 @@ use glium::{self, glutin};
 use gridsim::{Grid, Sim};
 use Renderer;
 
+pub fn basic_bool<S>(grid: Grid<S>)
+where
+    S: Sim<Cell = bool>,
+{
+    basic(grid, |&c| {
+        if c {
+            [1.0, 1.0, 1.0, 1.0]
+        } else {
+            [0.0, 0.0, 0.0, 1.0]
+        }
+    });
+}
+
 pub fn basic<S, F>(mut grid: Grid<S>, coloration: F)
 where
     S: Sim,
