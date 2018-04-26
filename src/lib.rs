@@ -2,6 +2,8 @@
 extern crate glium;
 extern crate gridsim;
 
+pub mod run;
+
 #[derive(Copy, Clone, Debug)]
 struct SquareVert {
     color: [f32; 4],
