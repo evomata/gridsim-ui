@@ -96,7 +96,7 @@ fn main() {
             },
         )],
     );
-    gridsim_ui::run::basic(grid, |&c| {
+    gridsim_ui::run::basic_par(grid, |&c| {
         if c.ant.is_some() {
             [1.0, 0.0, 0.0, 1.0]
         } else if c.color {
