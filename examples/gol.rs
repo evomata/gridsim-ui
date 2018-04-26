@@ -4,16 +4,16 @@ extern crate gridsim_ui;
 use gridsim::{Grid, GOL};
 
 fn main() {
-    let mut grid = Grid::<GOL>::new(256, 256);
-
-    // Add an F pentomino
-    let gwidth = grid.get_width();
-    let gheight = grid.get_height();
-    grid.get_cells_mut()[0 + gwidth / 2 + gwidth * gheight / 2] = true;
-    grid.get_cells_mut()[1 + gwidth / 2 + gwidth * gheight / 2] = true;
-    grid.get_cells_mut()[gwidth + gwidth / 2 + gwidth * gheight / 2] = true;
-    grid.get_cells_mut()[gwidth - 1 + gwidth / 2 + gwidth * gheight / 2] = true;
-    grid.get_cells_mut()[2 * gwidth + gwidth / 2 + gwidth * gheight / 2] = true;
+    let grid = Grid::<GOL>::new_iter(
+        256,
+        256,
+        (0..256).flat_map(|y| {
+            (0..256).map(move |x| {
+                let coord = ((x + 128) % 256, (y + 128) % 256);
+                vec![(0, 1), (1, 0), (1, 1), (1, 2), (2, 0)].contains(&coord)
+            })
+        }),
+    );
 
     gridsim_ui::run::basic(grid, |&c| {
         if c {
