@@ -97,7 +97,9 @@ fn main() {
         )],
     );
     gridsim_ui::run::basic(grid, |&c| {
-        if c.color {
+        if c.ant.is_some() {
+            [1.0, 0.0, 0.0, 1.0]
+        } else if c.color {
             [1.0, 1.0, 1.0, 1.0]
         } else {
             [0.0, 0.0, 0.0, 1.0]
