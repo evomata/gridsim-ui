@@ -2,6 +2,7 @@ use glium::{self, glutin};
 use gridsim::{Grid, Sim};
 use Renderer;
 
+/// Runs a grid with default window setup. Draws true as white and false as black.
 pub fn basic_bool<S>(grid: Grid<S>)
 where
     S: Sim<Cell = bool>,
@@ -15,6 +16,7 @@ where
     });
 }
 
+/// Runs a grid with default window setup and a coloration function.
 pub fn basic<S, F>(mut grid: Grid<S>, coloration: F)
 where
     S: Sim,
