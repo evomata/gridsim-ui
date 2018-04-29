@@ -33,15 +33,16 @@ impl Renderer {
     ///
     /// Renders the cells in a space from <-1, -1> to <1, 1> which is transformed with the transform matrix.
     pub fn render<
+        'a,
         D: glium::backend::Facade,
         Su: glium::Surface,
-        S: gridsim::Sim,
+        S: gridsim::Sim<'a>,
         F: Fn(&S::Cell) -> [f32; 4],
     >(
         &self,
         display: &D,
         surface: &mut Su,
-        grid: &gridsim::Grid<S>,
+        grid: &gridsim::SquareGrid<'a, S>,
         draw_params: glium::DrawParameters,
         cell_color: F,
     ) -> Result<(), glium::DrawError> {
