@@ -1,7 +1,8 @@
 extern crate gridsim;
 extern crate gridsim_ui;
 
-use gridsim::{moore::{Direction, Neighbors},
+use gridsim::{moore::{Direction as Dir, Neighbors},
+              Direction,
               Rule,
               SquareGrid};
 
@@ -10,7 +11,7 @@ enum LAnt {}
 
 #[derive(Clone, Default)]
 struct State {
-    ant: Option<Direction>,
+    ant: Option<Dir>,
     color: bool,
 }
 
@@ -19,17 +20,21 @@ impl<'a> Rule<'a> for LAnt {
     type Neighbors = Neighbors<&'a State>;
 
     fn rule(cell: State, neighbors: Self::Neighbors) -> State {
-        if let Some(d) = Direction::directions().map(Direction::inv).find(|d| neighbors[d].ant == Some(d)).map(|d| State {
-            ant: Some(if cell.color {
-                d.right()
-            } else {
-                d.left()
-            }),
-            color: !scell.color,
-        }).unwrap_or(State {
-            ant: None,
-            color: cell.color,
-        })
+        Dir::directions()
+            .map(Dir::inv)
+            .find(|&d| neighbors[d].ant == Some(d))
+            .map(|d| State {
+                ant: Some(if cell.color {
+                    d.right()
+                } else {
+                    d.left()
+                }),
+                color: !cell.color,
+            })
+            .unwrap_or(State {
+                ant: None,
+                color: cell.color,
+            })
     }
 }
 
@@ -40,12 +45,12 @@ fn main() {
         vec![(
             (0, 0),
             State {
-                ant: Some(Direction::Down),
+                ant: Some(Dir::Down),
                 color: false,
             },
         )],
     );
-    gridsim_ui::run::basic(grid, |&c| {
+    gridsim_ui::run::basic(grid, |c| {
         if c.ant.is_some() {
             [1.0, 0.0, 0.0, 1.0]
         } else if c.color {
