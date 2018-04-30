@@ -9,5 +9,6 @@ repository = "https://github.com/vadixidav/gridsim-ui"
 
 [dependencies]
 gridsim = { git = "https://github.com/evomata/gridsim.git" }
+rayon = "1.0.1"
 glium = "0.19.0"
 cgmath = "0.16.0"
