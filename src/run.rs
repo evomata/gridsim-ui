@@ -16,7 +16,7 @@ where
 {
     let mut events_loop = glutin::EventsLoop::new();
     let window = glutin::WindowBuilder::new();
-    let context = glutin::ContextBuilder::new();
+    let context = glutin::ContextBuilder::new().with_vsync(true);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let renderer = Renderer::new(&display);
 
@@ -67,7 +67,7 @@ where
 {
     let mut events_loop = glutin::EventsLoop::new();
     let window = glutin::WindowBuilder::new();
-    let context = glutin::ContextBuilder::new();
+    let context = glutin::ContextBuilder::new().with_vsync(true);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let renderer = Renderer::new(&display);
 
@@ -122,7 +122,7 @@ pub fn basic_filter<'a, S: 'a, Color, Filter>(
 {
     let mut events_loop = glutin::EventsLoop::new();
     let window = glutin::WindowBuilder::new();
-    let context = glutin::ContextBuilder::new();
+    let context = glutin::ContextBuilder::new().with_vsync(true);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let renderer = Renderer::new(&display);
 
