@@ -7,6 +7,7 @@ pub fn basic_bool<'a, S: 'a>(mut grid: SquareGrid<'a, S>)
 where
     S: Sim<'a, Cell = bool>,
     S::Cell: Sync + Send,
+    S::Async: Sync + Send,
     S::Move: Sync + Send,
     S::Diff: Sync + Send,
     S::Neighbors: Sync + Send,
@@ -58,6 +59,7 @@ where
     S: Sim<'a>,
     F: Fn(&S::Cell) -> [f32; 4] + Sync,
     S::Cell: Sync + Send,
+    S::Async: Sync + Send,
     S::Move: Sync + Send,
     S::Diff: Sync + Send,
     S::Neighbors: Sync + Send,
@@ -113,6 +115,7 @@ pub fn basic_filter<'a, S: 'a, Color, Filter>(
     Color: Fn(&S::Cell) -> [f32; 4] + Sync,
     Filter: Fn(&S::Cell) -> bool + Sync,
     S::Cell: Sync + Send,
+    S::Async: Sync + Send,
     S::Move: Sync + Send,
     S::Diff: Sync + Send,
     S::Neighbors: Sync + Send,
