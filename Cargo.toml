@@ -10,5 +10,5 @@ repository = "https://github.com/vadixidav/gridsim-ui"
 [dependencies]
 gridsim = "0.2.0"
 rayon = "1.0.1"
-glium = "0.19.0"
+glium = { git = "https://github.com/glium/glium" }
 cgmath = "0.16.0"
