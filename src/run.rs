@@ -84,6 +84,8 @@ pub fn basic_filter<'a, S: 'a, Color, Filter>(
             .unwrap();
         target.finish().unwrap();
 
+        let mut finish = false;
+
         // the main loop
         events_loop.poll_events(|event| {
             match event {
@@ -97,7 +99,7 @@ pub fn basic_filter<'a, S: 'a, Color, Filter>(
                                 .expect(
                                     "gridsim-ui::run::basic_filter(): unable to write flamegraph",
                                 );
-                            ::std::process::exit(0);
+                            finish = true;
                         }
                         _ => (),
                     }
@@ -105,5 +107,9 @@ pub fn basic_filter<'a, S: 'a, Color, Filter>(
                 _ => (),
             }
         });
+
+        if finish {
+            return;
+        }
     }
 }
