@@ -1,3 +1,8 @@
+#![cfg_attr(feature = "flame_it", feature(plugin, custom_attribute))]
+#![cfg_attr(feature = "flame_it", plugin(flamer))]
+
+#[cfg(feature = "flame_it")]
+extern crate flame;
 #[macro_use]
 extern crate glium;
 extern crate gridsim;
@@ -35,6 +40,7 @@ impl Renderer {
     /// Takes a glium Facade, a drawing Surface, a Grid, a transform, and a cell to color map.
     ///
     /// Renders the cells in a space from <-1, -1> to <1, 1> which is transformed with the transform matrix.
+    #[cfg_attr(feature = "flame_it", flame)]
     pub fn render<
         'a,
         D: glium::backend::Facade,

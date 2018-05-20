@@ -1,4 +1,4 @@
-
+flame-graph.html
 /target/
 **/*.rs.bk
 Cargo.lock

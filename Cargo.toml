@@ -12,3 +12,10 @@ gridsim = "0.2.0"
 rayon = "1.0.1"
 glium = { git = "https://github.com/glium/glium" }
 cgmath = "0.16.0"
+
+flamer = { version = "0.2.2", optional = true }
+flame = { version = "0.2.2", optional = true }
+
+[features]
+default = []
+flame_it = ["flame", "flamer"]
