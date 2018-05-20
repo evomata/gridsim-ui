@@ -1,6 +1,6 @@
 [package]
 name = "gridsim-ui"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Geordon Worley <vadixidav@gmail.com>"]
 description = "A library for rendering grids from gridsim"
 license = "MIT"
@@ -10,7 +10,7 @@ repository = "https://github.com/vadixidav/gridsim-ui"
 [dependencies]
 gridsim = "0.2.0"
 rayon = "1.0.1"
-glium = { git = "https://github.com/glium/glium" }
+glium = "0.19.0"
 cgmath = "0.16.0"
 
 flamer = { version = "0.2.2", optional = true }
