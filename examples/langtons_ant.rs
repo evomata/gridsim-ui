@@ -1,10 +1,9 @@
 extern crate gridsim;
 extern crate gridsim_ui;
 
-use gridsim::{moore::{Direction as Dir, Neighbors},
-              Direction,
-              Rule,
-              SquareGrid};
+use gridsim::{
+    moore::{Direction as Dir, Neighbors}, Direction, Rule, SquareGrid,
+};
 
 // Langton's Ant
 enum LAnt {}
@@ -50,7 +49,7 @@ fn main() {
             },
         )],
     );
-    gridsim_ui::run::basic(grid, |c| {
+    gridsim_ui::Loop::new(|c: &State| {
         if c.ant.is_some() {
             [1.0, 0.0, 0.0, 1.0]
         } else if c.color {
@@ -58,5 +57,5 @@ fn main() {
         } else {
             [0.0, 0.0, 0.0, 1.0]
         }
-    });
+    }).run(grid);
 }

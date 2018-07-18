@@ -10,5 +10,5 @@ fn main() {
         1024,
         vec![(0, 1), (1, 0), (1, 1), (1, 2), (2, 0)],
     );
-    Loop::new_bool().run(grid);
+    Loop::new_bool().scale(5.0).filter(|&c| c).run(grid);
 }

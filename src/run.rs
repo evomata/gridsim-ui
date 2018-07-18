@@ -4,155 +4,116 @@ use glium::{
 use gridsim::{GetNeighbors, Sim, SquareGrid, TakeMoveNeighbors};
 use Renderer;
 
-const SCALED_DEFAULT: f32 = 10.0;
+type Coloration<C> = Box<Fn(&C) -> [f32; 4] + Sync>;
+type Filter<C> = Box<Fn(&C) -> bool + Sync>;
 
-/// Runs a grid with default window setup. Draws true as white and false as black.
-pub fn basic_bool<'a, S: 'a>(grid: SquareGrid<'a, S>)
-where
-    S: Sim<'a, Cell = bool>,
-    S::Cell: Sync + Send,
-    S::Move: Sync + Send,
-    S::Diff: Sync + Send,
-    S::Neighbors: Sync + Send,
-    S::MoveNeighbors: Sync + Send,
-    SquareGrid<'a, S>: TakeMoveNeighbors<usize, S::MoveNeighbors>,
-    SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
-{
-    scaled_bool(grid, SCALED_DEFAULT);
-}
-
-// Runs a grid with each cell in the window is scale pixels^2. Draws true as white and false as black.
-pub fn scaled_bool<'a, S: 'a>(grid: SquareGrid<'a, S>, scale: f32)
-where
-    S: Sim<'a, Cell = bool>,
-    S::Cell: Sync + Send,
-    S::Move: Sync + Send,
-    S::Diff: Sync + Send,
-    S::Neighbors: Sync + Send,
-    S::MoveNeighbors: Sync + Send,
-    SquareGrid<'a, S>: TakeMoveNeighbors<usize, S::MoveNeighbors>,
-    SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
-{
-    scaled_filter(grid, |_| [1.0, 1.0, 1.0, 1.0], |&c| c, scale);
-}
-
-/// Runs a grid with default window setup and a coloration function.
-pub fn basic<'a, S: 'a, F>(grid: SquareGrid<'a, S>, coloration: F)
+pub struct Loop<'a, S>
 where
     S: Sim<'a>,
-    F: Fn(&S::Cell) -> [f32; 4] + Sync,
-    S::Cell: Sync + Send,
-    S::Move: Sync + Send,
-    S::Diff: Sync + Send,
-    S::Neighbors: Sync + Send,
-    S::MoveNeighbors: Sync + Send,
-    SquareGrid<'a, S>: TakeMoveNeighbors<usize, S::MoveNeighbors>,
-    SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
 {
-    scaled(grid, coloration, SCALED_DEFAULT);
-}
-
-/// Runs a grid with each cell in the window is scale pixels^2 and a coloration function.
-pub fn scaled<'a, S: 'a, F>(grid: SquareGrid<'a, S>, coloration: F, scale: f32)
-where
-    S: Sim<'a>,
-    F: Fn(&S::Cell) -> [f32; 4] + Sync,
-    S::Cell: Sync + Send,
-    S::Move: Sync + Send,
-    S::Diff: Sync + Send,
-    S::Neighbors: Sync + Send,
-    S::MoveNeighbors: Sync + Send,
-    SquareGrid<'a, S>: TakeMoveNeighbors<usize, S::MoveNeighbors>,
-    SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
-{
-    scaled_filter(grid, coloration, |_| true, scale);
-}
-
-/// Runs a grid with default window setup, a coloration function, and a filter for which cells to draw.
-pub fn basic_filter<'a, S: 'a, Color, Filter>(
-    grid: SquareGrid<'a, S>,
-    coloration: Color,
-    filter: Filter,
-) where
-    S: Sim<'a>,
-    Color: Fn(&S::Cell) -> [f32; 4] + Sync,
-    Filter: Fn(&S::Cell) -> bool + Sync,
-    S::Cell: Sync + Send,
-    S::Move: Sync + Send,
-    S::Diff: Sync + Send,
-    S::Neighbors: Sync + Send,
-    S::MoveNeighbors: Sync + Send,
-    SquareGrid<'a, S>: TakeMoveNeighbors<usize, S::MoveNeighbors>,
-    SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
-{
-    scaled_filter(grid, coloration, filter, SCALED_DEFAULT);
-}
-
-/// Runs a grid with each cell in the window is scale pixels^2, a coloration function, and a filter for which cells to draw.
-pub fn scaled_filter<'a, S: 'a, Color, Filter>(
-    mut grid: SquareGrid<'a, S>,
-    coloration: Color,
-    filter: Filter,
     scale: f32,
-) where
+    coloration: Coloration<S::Cell>,
+    filter: Filter<S::Cell>,
+}
+
+impl<'a, S> Loop<'a, S>
+where
     S: Sim<'a>,
-    Color: Fn(&S::Cell) -> [f32; 4] + Sync,
-    Filter: Fn(&S::Cell) -> bool + Sync,
-    S::Cell: Sync + Send,
-    S::Move: Sync + Send,
-    S::Diff: Sync + Send,
-    S::Neighbors: Sync + Send,
-    S::MoveNeighbors: Sync + Send,
-    SquareGrid<'a, S>: TakeMoveNeighbors<usize, S::MoveNeighbors>,
-    SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
 {
-    let mut events_loop = glutin::EventsLoop::new();
-    let window = glutin::WindowBuilder::new().with_dimensions(
-        (scale * grid.get_width() as f32) as u32,
-        (scale * grid.get_height() as f32) as u32,
-    );
-    let context = glutin::ContextBuilder::new().with_vsync(true);
-    let display = glium::Display::new(window, context, &events_loop).unwrap();
-    let renderer = Renderer::new(&display);
+    pub fn new<C>(coloration: C) -> Self
+    where
+        C: Fn(&S::Cell) -> [f32; 4] + Sync + 'static,
+    {
+        Loop {
+            scale: 10.0,
+            coloration: Box::new(coloration),
+            filter: Box::new(|_| true),
+        }
+    }
 
-    loop {
-        use glium::Surface;
-        grid.cycle();
+    pub fn new_bool() -> Self
+    where
+        S: Sim<'a, Cell = bool>,
+    {
+        Loop {
+            scale: 10.0,
+            coloration: Box::new(|_| [1.0, 1.0, 1.0, 1.0]),
+            filter: Box::new(|&c| c),
+        }
+    }
 
-        let mut target = display.draw();
-        target.clear_color(0.0, 0.0, 0.0, 1.0);
-        renderer
-            .render(
-                &display,
-                &mut target,
-                &grid,
-                Default::default(),
-                &coloration,
-                &filter,
-            )
-            .unwrap();
-        target.finish().unwrap();
+    pub fn scale(&mut self, scale: f32) -> &mut Self {
+        self.scale = scale;
+        self
+    }
 
-        let mut finish = false;
+    pub fn filter<F>(&mut self, filter: F) -> &mut Self
+    where
+        F: Fn(&S::Cell) -> bool + Sync + 'static,
+    {
+        self.filter = Box::new(filter);
+        self
+    }
 
-        // the main loop
-        events_loop.poll_events(|event| {
-            match event {
-                glutin::Event::WindowEvent { event, .. } => {
-                    match event {
-                        // Break from the main loop when the window is closed.
-                        WindowEvent::Closed => {
-                            finish = true;
+    pub fn run(&self, mut grid: SquareGrid<'a, S>)
+    where
+        S: 'a,
+        S::Cell: Sync + Send,
+        S::Move: Sync + Send,
+        S::Diff: Sync + Send,
+        S::Neighbors: Sync + Send,
+        S::MoveNeighbors: Sync + Send,
+        SquareGrid<'a, S>: TakeMoveNeighbors<usize, S::MoveNeighbors>,
+        SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
+    {
+        let mut events_loop = glutin::EventsLoop::new();
+        let window = glutin::WindowBuilder::new().with_dimensions(
+            (self.scale * grid.get_width() as f32) as u32,
+            (self.scale * grid.get_height() as f32) as u32,
+        );
+        let context = glutin::ContextBuilder::new().with_vsync(true);
+        let display = glium::Display::new(window, context, &events_loop).unwrap();
+        let renderer = Renderer::new(&display);
+
+        loop {
+            use glium::Surface;
+            grid.cycle();
+
+            let mut target = display.draw();
+            target.clear_color(0.0, 0.0, 0.0, 1.0);
+            renderer
+                .render(
+                    &display,
+                    &mut target,
+                    &grid,
+                    Default::default(),
+                    &*self.coloration,
+                    &*self.filter,
+                )
+                .unwrap();
+            target.finish().unwrap();
+
+            let mut finish = false;
+
+            // the main loop
+            events_loop.poll_events(|event| {
+                match event {
+                    glutin::Event::WindowEvent { event, .. } => {
+                        match event {
+                            // Break from the main loop when the window is closed.
+                            WindowEvent::Closed => {
+                                finish = true;
+                            }
+                            _ => (),
                         }
-                        _ => (),
                     }
+                    _ => (),
                 }
-                _ => (),
-            }
-        });
+            });
 
-        if finish {
-            return;
+            if finish {
+                return;
+            }
         }
     }
 }

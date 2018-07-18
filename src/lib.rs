@@ -3,7 +3,9 @@ extern crate glium;
 extern crate gridsim;
 extern crate rayon;
 
-pub mod run;
+mod run;
+
+pub use run::Loop;
 
 use rayon::prelude::*;
 
