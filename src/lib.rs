@@ -3,6 +3,9 @@ extern crate glium;
 extern crate gridsim;
 extern crate rayon;
 
+#[cfg(feature = "multinode")]
+extern crate serde;
+
 mod run;
 
 pub use run::Loop;
