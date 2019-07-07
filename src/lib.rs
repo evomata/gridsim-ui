@@ -14,7 +14,7 @@ use rayon::prelude::*;
 
 #[derive(Copy, Clone, Debug)]
 struct SquareVert {
-    color: [f32; 4],
+    color: [f32; 3],
     position: [f32; 2],
 }
 
@@ -33,7 +33,8 @@ impl Renderer {
                 include_str!("square.vert"),
                 include_str!("square.frag"),
                 Some(include_str!("square.geom")),
-            ).unwrap(),
+            )
+            .unwrap(),
         }
     }
 
@@ -45,7 +46,7 @@ impl Renderer {
         D: glium::backend::Facade,
         Su: glium::Surface,
         S: gridsim::Sim<'a>,
-        Color: Fn(&S::Cell) -> [f32; 4] + Sync,
+        Color: Fn(&S::Cell) -> [f32; 3] + Sync,
         Filter: Fn(&S::Cell) -> bool + Sync,
     >(
         &self,
@@ -61,7 +62,8 @@ impl Renderer {
     {
         let width = grid.get_width();
         let height = grid.get_height();
-        let verts: Vec<_> = grid.get_cells()
+        let verts: Vec<_> = grid
+            .get_cells()
             .par_iter()
             .enumerate()
             .filter(|(_, cell)| filter(&cell))

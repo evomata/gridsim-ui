@@ -2,7 +2,7 @@ extern crate gridsim;
 extern crate gridsim_ui;
 
 use gridsim::{
-    moore::{Direction as Dir, Neighbors}, Direction, Rule, SquareGrid,
+    moore::*, Direction, Rule, SquareGrid,
 };
 
 // Langton's Ant
@@ -10,23 +10,23 @@ enum LAnt {}
 
 #[derive(Clone, Default)]
 struct State {
-    ant: Option<Dir>,
+    ant: Option<MooreDirection>,
     color: bool,
 }
 
 impl<'a> Rule<'a> for LAnt {
     type Cell = State;
-    type Neighbors = Neighbors<&'a State>;
+    type Neighbors = MooreNeighbors<&'a State>;
 
     fn rule(cell: State, neighbors: Self::Neighbors) -> State {
-        Dir::directions()
-            .map(Dir::inv)
+        MooreDirection::directions()
+            .map(MooreDirection::inv)
             .find(|&d| neighbors[d].ant == Some(d))
             .map(|d| State {
                 ant: Some(if cell.color {
-                    d.right()
+                    d.turn_clockwise()
                 } else {
-                    d.left()
+                    d.turn_counterclockwise()
                 }),
                 color: !cell.color,
             })
@@ -44,18 +44,18 @@ fn main() {
         vec![(
             (0, 0),
             State {
-                ant: Some(Dir::Down),
+                ant: Some(MooreDirection::Down),
                 color: false,
             },
         )],
     );
     gridsim_ui::Loop::new(|c: &State| {
         if c.ant.is_some() {
-            [1.0, 0.0, 0.0, 1.0]
+            [1.0, 0.0, 0.0]
         } else if c.color {
-            [1.0, 1.0, 1.0, 1.0]
+            [1.0, 1.0, 1.0]
         } else {
-            [0.0, 0.0, 0.0, 1.0]
+            [0.0, 0.0, 0.0]
         }
     }).run(grid);
 }

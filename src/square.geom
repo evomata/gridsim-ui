@@ -3,8 +3,8 @@
 layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
 
-in vec4 g_color[1];
-out vec4 f_color;
+in vec3 g_color[1];
+out vec3 f_color;
 
 uniform vec2 dims;
 void main() {

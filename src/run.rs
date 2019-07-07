@@ -1,5 +1,6 @@
 use glium::{
-    self, glutin::{self, WindowEvent},
+    self,
+    glutin::{self, WindowEvent},
 };
 use gridsim::{GetNeighbors, Sim, SquareGrid, TakeMoveNeighbors};
 use Renderer;
@@ -9,8 +10,8 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "multinode")]
 use std::io::{Read, Write};
 
-type Coloration<C> = Box<Fn(&C) -> [f32; 4] + Sync>;
-type Filter<C> = Box<Fn(&C) -> bool + Sync>;
+type Coloration<C> = Box<dyn Fn(&C) -> [f32; 3] + Sync>;
+type Filter<C> = Box<dyn Fn(&C) -> bool + Sync>;
 
 pub struct Loop<'a, S>
 where
@@ -25,9 +26,10 @@ impl<'a, S> Loop<'a, S>
 where
     S: Sim<'a>,
 {
+    /// Must pass the function that colors cells. Color is in RGB (`[red, green, blue]`).
     pub fn new<C>(coloration: C) -> Self
     where
-        C: Fn(&S::Cell) -> [f32; 4] + Sync + 'static,
+        C: Fn(&S::Cell) -> [f32; 3] + Sync + 'static,
     {
         Loop {
             scale: 10.0,
@@ -42,7 +44,7 @@ where
     {
         Loop {
             scale: 10.0,
-            coloration: Box::new(|_| [1.0, 1.0, 1.0, 1.0]),
+            coloration: Box::new(|_| [1.0, 1.0, 1.0]),
             filter: Box::new(|&c| c),
         }
     }
@@ -185,24 +187,26 @@ where
 
         loop {
             use glium::Surface;
-            if grid.cycle_multi(
-                &mut in_right,
-                &mut in_up_right,
-                &mut in_up,
-                &mut in_up_left,
-                &mut in_left,
-                &mut in_down_left,
-                &mut in_down,
-                &mut in_down_right,
-                &mut out_right,
-                &mut out_up_right,
-                &mut out_up,
-                &mut out_up_left,
-                &mut out_left,
-                &mut out_down_left,
-                &mut out_down,
-                &mut out_down_right,
-            ).is_err()
+            if grid
+                .cycle_multi(
+                    &mut in_right,
+                    &mut in_up_right,
+                    &mut in_up,
+                    &mut in_up_left,
+                    &mut in_left,
+                    &mut in_down_left,
+                    &mut in_down,
+                    &mut in_down_right,
+                    &mut out_right,
+                    &mut out_up_right,
+                    &mut out_up,
+                    &mut out_up_left,
+                    &mut out_left,
+                    &mut out_down_left,
+                    &mut out_down,
+                    &mut out_down_right,
+                )
+                .is_err()
             {
                 return;
             }
