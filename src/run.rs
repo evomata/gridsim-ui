@@ -3,7 +3,7 @@ use glium::{
     glutin::{self, WindowEvent},
 };
 use gridsim::{GetNeighbors, Sim, SquareGrid, TakeMoveNeighbors};
-use Renderer;
+use crate::Renderer;
 
 #[cfg(feature = "multinode")]
 use serde::{Deserialize, Serialize};
