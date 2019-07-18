@@ -74,10 +74,10 @@ where
         SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
     {
         let mut events_loop = glutin::EventsLoop::new();
-        let window = glutin::WindowBuilder::new().with_dimensions(
-            (self.scale * grid.get_width() as f32) as u32,
-            (self.scale * grid.get_height() as f32) as u32,
-        );
+        let window = glutin::WindowBuilder::new().with_dimensions(glutin::dpi::LogicalSize::new(
+            f64::from(self.scale) * grid.get_width() as f64,
+            f64::from(self.scale) * grid.get_height() as f64,
+        ));
         let context = glutin::ContextBuilder::new().with_vsync(true);
         let display = glium::Display::new(window, context, &events_loop).unwrap();
         let renderer = Renderer::new(&display);
@@ -105,7 +105,7 @@ where
             // the main loop
             events_loop.poll_events(|event| {
                 if let glutin::Event::WindowEvent {
-                    event: WindowEvent::Closed,
+                    event: WindowEvent::CloseRequested,
                     ..
                 } = event
                 {
@@ -174,10 +174,10 @@ where
         SquareGrid<'a, S>: GetNeighbors<'a, usize, S::Neighbors>,
     {
         let mut events_loop = glutin::EventsLoop::new();
-        let window = glutin::WindowBuilder::new().with_dimensions(
-            (self.scale * grid.get_width() as f32) as u32,
-            (self.scale * grid.get_height() as f32) as u32,
-        );
+        let window = glutin::WindowBuilder::new().with_dimensions(glutin::dpi::LogicalSize::new(
+            f64::from(self.scale) * grid.get_width() as f64,
+            f64::from(self.scale) * grid.get_height() as f64,
+        ));
         let context = glutin::ContextBuilder::new().with_vsync(true);
         let display = glium::Display::new(window, context, &events_loop).unwrap();
         let renderer = Renderer::new(&display);
@@ -227,7 +227,7 @@ where
             // the main loop
             events_loop.poll_events(|event| {
                 if let glutin::Event::WindowEvent {
-                    event: WindowEvent::Closed,
+                    event: WindowEvent::CloseRequested,
                     ..
                 } = event
                 {
