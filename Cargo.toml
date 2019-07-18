@@ -1,7 +1,7 @@
 [package]
 name = "gridsim-ui"
 edition = "2018"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Geordon Worley <vadixidav@gmail.com>"]
 description = "Visualizing gridsim grids"
 license = "MIT"
