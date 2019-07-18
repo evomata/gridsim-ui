@@ -1,10 +1,4 @@
-#[macro_use]
-extern crate glium;
-extern crate gridsim;
-extern crate rayon;
-
-#[cfg(feature = "multinode")]
-extern crate serde;
+use glium::{implement_vertex, uniform};
 
 mod run;
 

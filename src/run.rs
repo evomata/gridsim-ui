@@ -1,9 +1,9 @@
+use crate::Renderer;
 use glium::{
     self,
     glutin::{self, WindowEvent},
 };
 use gridsim::{GetNeighbors, Sim, SquareGrid, TakeMoveNeighbors};
-use crate::Renderer;
 
 #[cfg(feature = "multinode")]
 use serde::{Deserialize, Serialize};
@@ -104,17 +104,13 @@ where
 
             // the main loop
             events_loop.poll_events(|event| {
-                match event {
-                    glutin::Event::WindowEvent { event, .. } => {
-                        match event {
-                            // Break from the main loop when the window is closed.
-                            WindowEvent::Closed => {
-                                finish = true;
-                            }
-                            _ => (),
-                        }
-                    }
-                    _ => (),
+                if let glutin::Event::WindowEvent {
+                    event: WindowEvent::Closed,
+                    ..
+                } = event
+                {
+                    // Break from the main loop when the window is closed.
+                    finish = true;
                 }
             });
 
@@ -130,6 +126,7 @@ where
     /// Make sure the reads and writes are only connected to other `SquareGrid::run_multi` running
     /// on any machine using THE EXACT SAME simulation or else there may be undefined behavior.
     #[cfg(feature = "multinode")]
+    #[allow(clippy::too_many_arguments)]
     pub unsafe fn run_multi<
         I0: Read,
         I1: Read,
@@ -229,17 +226,13 @@ where
 
             // the main loop
             events_loop.poll_events(|event| {
-                match event {
-                    glutin::Event::WindowEvent { event, .. } => {
-                        match event {
-                            // Break from the main loop when the window is closed.
-                            WindowEvent::Closed => {
-                                finish = true;
-                            }
-                            _ => (),
-                        }
-                    }
-                    _ => (),
+                if let glutin::Event::WindowEvent {
+                    event: WindowEvent::Closed,
+                    ..
+                } = event
+                {
+                    // Break from the main loop when the window is closed.
+                    finish = true;
                 }
             });
 
